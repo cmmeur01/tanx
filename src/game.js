@@ -1,19 +1,19 @@
 import { angle, power } from './util';
 import Bullet from './bullet';
+import Level from './level';
 
 
 class Game {
   constructor(ctx, canvas) {
     this.ctx = ctx;
     this.canvas = canvas;
-    this.gravity = 0.4;
-    this.ground = 1024 - (1024 / 6);
     this.pulledBack = false;
     this.firing = false;
     this.bullets = [new Bullet()];
     this.mouseUp = false;
     this.mouseDown = false;
     this.mousePos = { x: 0, y: 0 };
+    this.level = new Level(ctx);
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
     this.run = this.run.bind(this);
@@ -59,16 +59,6 @@ class Game {
     }
   }
 
-  drawCircle() {
-    if (!this.firing) {
-      this.ctx.beginPath();
-      this.ctx.arc(this.bullets[0].x, this.bullets[0].y, 100, 0, 2 * Math.PI);
-      this.ctx.strokeStyle = "red";
-      this.ctx.stroke();
-      this.drawAimer();
-    }
-  }
-
   drawAimer() {
     if (this.pulledBack) {
       let aim = this.getCoords(this.mousePos);
@@ -90,7 +80,11 @@ class Game {
   }
 
   render() {
-    this.drawCircle();
+    //render level
+    this.level.render();
+    //draw the aimer
+    this.drawAimer();
+    //go through array of bullets, tanks, etc draw them all
     this.bullets[0].draw(this.ctx);
   }
 
@@ -99,8 +93,6 @@ class Game {
     this.render();
     requestAnimationFrame(this.run);
   }
-
-
 }
 
 export default Game;
