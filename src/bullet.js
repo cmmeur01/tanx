@@ -3,14 +3,19 @@ import { angle, power } from './util';
 const BULLET_GRAVITY = 1.25;
 
 class Bullet {
-  constructor() {
-    this.x = 100;
-    this.y = 718;
+  constructor(ctx) {
+    this.ctx = ctx;
+    this.x = 112;
+    this.y = 672;
     this.velX = 0;
     this.velY = 0;
     this.speed = 1;
     this.firing = false;
+    this.hit = false;
     this.explode = this.explode.bind(this);
+    this.fireBullet = this.fireBullet.bind(this);
+    this.calcTrajectory = this.calcTrajectory.bind(this);
+    this.draw = this.draw.bind(this);
   }
 
   fireBullet(mousePos) {
@@ -23,18 +28,11 @@ class Bullet {
     }
   }
 
-  //explosion taken care of here currently, will move to "isHit"
-  //method eventually
-  calcTrajectory(ctx) {
+  calcTrajectory() {
     if (this.y <= 718 && this.firing) {
       this.velY += BULLET_GRAVITY;
       this.x += this.velX;
       this.y += this.velY;
-    } else if (this.y > 718 && this.firing) {
-      this.explode(ctx);
-      this.velX = 0;
-      this.velY = 0;
-      this.firing = false;
     } else {
       this.velX = 0;
       this.velY = 0;
@@ -42,19 +40,20 @@ class Bullet {
     }
   }
 
-  draw(ctx) {
-    this.calcTrajectory(ctx);
-    ctx.fillStyle = 'black';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 5, 0, 2 * Math.PI, true);
-    ctx.fill();
+  draw() {
+    this.calcTrajectory();
+    this.ctx.fillStyle = 'black';
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, 5, 0, 2 * Math.PI, true);
+    this.ctx.fill();
+    if (this.hit) this.explode();
   }
 
-  explode(ctx) {
-    ctx.fillStyle = 'orange';
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, 25, 0, 2 * Math.PI, true);
-    ctx.fill();
+  explode() {
+    this.ctx.fillStyle = 'orange';
+    this.ctx.beginPath();
+    this.ctx.arc(this.x, this.y, 50, 0, 2 * Math.PI, true);
+    this.ctx.fill();
   }
 
 }

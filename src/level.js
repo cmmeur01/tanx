@@ -1,8 +1,10 @@
-
+import Tank from './tank';
 
 class Level {
   constructor(ctx) {
     this.ctx = ctx;
+    this.player = [new Tank(ctx, 'player', [null,null])];
+    this.enemies = [new Tank(ctx, 'enemy', [700, 698]), new Tank(ctx, 'enemy', [600, 698]), new Tank(ctx, 'enemy', [800, 698])];
   }
 
   drawBackground() {
@@ -14,6 +16,8 @@ class Level {
 
   render() {
     this.drawBackground();
+    this.player[0].render();
+    this.enemies.forEach(enemy => enemy.render());
   }
 
 }

@@ -1,6 +1,7 @@
 import { angle, power } from './util';
 import Bullet from './bullet';
 import Level from './level';
+import Tank from './tank';
 
 
 class Game {
@@ -9,7 +10,7 @@ class Game {
     this.canvas = canvas;
     this.pulledBack = false;
     this.firing = false;
-    this.bullets = [new Bullet()];
+    this.bullets = [new Bullet(ctx)];
     this.mouseUp = false;
     this.mouseDown = false;
     this.mousePos = { x: 0, y: 0 };
@@ -70,9 +71,22 @@ class Game {
     }
   }
 
+  isHit() {
+    this.bullets.forEach(bullet => {
+      this.level.enemies.forEach((tank, idx) => {
+        if (power({ x: bullet.x, y: bullet.y }, { x: tank.x, y: tank.y }) < 40) {
+          tank.hit = true;
+          bullet.hit = true;
+          this.level.enemies.splice(idx, 1);
+          }
+        });
+    });
+  }
+
   update() {
     this.isPulledBack();
     this.isFiring();
+    this.isHit();
     if (this.firing) {
       this.bullets[0].fireBullet(this.mousePos);
     }
@@ -85,7 +99,7 @@ class Game {
     //draw the aimer
     this.drawAimer();
     //go through array of bullets, tanks, etc draw them all
-    this.bullets[0].draw(this.ctx);
+    this.bullets.forEach(bullet => bullet.draw());
   }
 
   run() {
