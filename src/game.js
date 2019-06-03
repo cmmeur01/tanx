@@ -18,6 +18,22 @@ class Game {
     this.update = this.update.bind(this);
     this.render = this.render.bind(this);
     this.run = this.run.bind(this);
+    this.welcome = this.welcome.bind(this);
+    this.reset = this.reset.bind(this);
+    this.welcome();
+  }
+
+  reset() {
+    location.reload();
+  }
+
+  welcome(){
+    this.ctx.font = '48px Arial';
+    this.ctx.fillText('TANX', 480, 100);
+  }
+
+  addShot() {
+    this.bullets.unshift(new Bullet(this.ctx));
   }
   
   getMousePos(canvas, e) {
@@ -50,6 +66,8 @@ class Game {
     if (this.mousePos && this.pulledBack && this.mouseUp) {
       this.pulledBack = false;
       this.firing = true;
+    } else {
+      this.firing = false;
     }
   }
 
@@ -89,6 +107,7 @@ class Game {
     this.isHit();
     if (this.firing) {
       this.bullets[0].fireBullet(this.mousePos);
+      this.addShot();
     }
     this.ctx.clearRect(0, 0, 1024, 768);
   }
@@ -100,12 +119,22 @@ class Game {
     this.drawAimer();
     //go through array of bullets, tanks, etc draw them all
     this.bullets.forEach(bullet => bullet.draw());
+    this.welcome();
   }
 
   run() {
     this.update();
     this.render();
-    requestAnimationFrame(this.run);
+    
+    if (this.level.enemies.length === 0) {
+      alert("you win");
+      this.reset();
+    } else if (this.bullets.length > 9) {
+      alert("you have ran out of bullets and succumb to the enemy");
+      this.reset();
+    } else {
+      requestAnimationFrame(this.run);
+    }
   }
 }
 
